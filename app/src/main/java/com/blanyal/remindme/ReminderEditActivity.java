@@ -18,6 +18,8 @@
 package com.blanyal.remindme;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -29,15 +31,14 @@ import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
-import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
-import com.wdullaer.materialdatetimepicker.time.RadialPickerLayout;
-import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
 import java.util.Calendar;
 
@@ -231,34 +232,40 @@ public class ReminderEditActivity extends AppCompatActivity implements
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
     }
 
-    // On clicking Time picker
-    public void setTime(View v){
-        Calendar now = Calendar.getInstance();
-        TimePickerDialog tpd = TimePickerDialog.newInstance(
-                this,
-                now.get(Calendar.HOUR_OF_DAY),
-                now.get(Calendar.MINUTE),
-                false
-        );
-        tpd.setThemeDark(false);
-        tpd.show(getFragmentManager(), "Timepickerdialog");
+    public void setDate(View v)
+    {
+        DatePickerDialog dpd;
+        dpd = new DatePickerDialog(ReminderEditActivity.this,
+                this, mYear, mMonth, mDay);
+        dpd.getDatePicker().setMinDate(System.currentTimeMillis());
+        dpd.show();
     }
 
-    // On clicking Date picker
-    public void setDate(View v){
-        Calendar now = Calendar.getInstance();
-        DatePickerDialog dpd = DatePickerDialog.newInstance(
-                this,
-                now.get(Calendar.YEAR),
-                now.get(Calendar.MONTH),
-                now.get(Calendar.DAY_OF_MONTH)
-        );
-        dpd.show(getFragmentManager(), "Datepickerdialog");
+    public void setTime(View v) {
+        Calendar myCalendar = Calendar.getInstance();
+        int hour = myCalendar.get(Calendar.HOUR_OF_DAY);
+        int minute = myCalendar.get(Calendar.MINUTE);
+
+        TimePickerDialog tpd;
+
+        tpd = new TimePickerDialog(ReminderEditActivity.this, this, hour, minute, true);
+        tpd.setTitle("Select Time");
+        tpd.show();
     }
 
-    // Obtain time from time picker
+
     @Override
-    public void onTimeSet(RadialPickerLayout view, int hourOfDay, int minute) {
+    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+        month ++;
+        mDay = dayOfMonth;
+        mMonth = month;
+        mYear = year;
+        mDate = dayOfMonth + "/" + month + "/" + year;
+        mDateText.setText(mDate);
+    }
+
+    @Override
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
         mHour = hourOfDay;
         mMinute = minute;
         if (minute < 10) {
@@ -267,17 +274,6 @@ public class ReminderEditActivity extends AppCompatActivity implements
             mTime = hourOfDay + ":" + minute;
         }
         mTimeText.setText(mTime);
-    }
-
-    // Obtain date from date picker
-    @Override
-    public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
-        monthOfYear ++;
-        mDay = dayOfMonth;
-        mMonth = monthOfYear;
-        mYear = year;
-        mDate = dayOfMonth + "/" + monthOfYear + "/" + year;
-        mDateText.setText(mDate);
     }
 
     // On clicking the active button
@@ -473,4 +469,5 @@ public class ReminderEditActivity extends AppCompatActivity implements
                 return super.onOptionsItemSelected(item);
         }
     }
+
 }
