@@ -413,18 +413,18 @@ public class MainActivity extends AppCompatActivity {
 
             // Set repeat views
             public void setReminderRepeatInfo(String repeat, String repeatNo, String repeatType) {
-                if(repeat.equals("true")){
+                if(repeat.equalsIgnoreCase("true")){
                     mRepeatInfoText.setText("Every " + repeatNo + " " + repeatType + "(s)");
-                }else if (repeat.equals("false")) {
+                }else {
                     mRepeatInfoText.setText("Repeat Off");
                 }
             }
 
             // Set active image as on or off
             public void setActiveImage(String active){
-                if(active.equals("true")){
+                if(active.equalsIgnoreCase("true")){
                     mActiveImage.setImageResource(R.drawable.ic_notifications_on_white_24dp);
-                }else if (active.equals("false")) {
+                }else {
                     mActiveImage.setImageResource(R.drawable.ic_notifications_off_grey600_24dp);
                 }
             }
