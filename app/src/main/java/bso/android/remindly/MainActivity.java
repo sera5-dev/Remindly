@@ -15,7 +15,7 @@
  */
 
 
-package com.blanyal.remindme;
+package bso.android.remindly;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -38,6 +38,7 @@ import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.bignerdranch.android.multiselector.ModalMultiSelectorCallback;
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.bignerdranch.android.multiselector.SwappingHolder;
+import com.blanyal.remindme.R;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
 import java.text.DateFormat;

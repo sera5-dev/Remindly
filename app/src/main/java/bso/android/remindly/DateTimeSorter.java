@@ -15,7 +15,7 @@
  */
 
 
-package com.blanyal.remindme;
+package bso.android.remindly;
 
 // Class to create DateTime objects for easy sorting
 public class DateTimeSorter {

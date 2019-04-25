@@ -20,7 +20,7 @@ android {
     compileSdkVersion 28
 
     defaultConfig {
-        applicationId "com.blanyal.remindly"
+        applicationId "bso.android.remindly"
         minSdkVersion 15
         targetSdkVersion 28
         versionCode 2

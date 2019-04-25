@@ -28,7 +28,7 @@
         android:theme="@style/AppTheme" >
 
         <activity
-            android:name=".MainActivity"
+            android:name="bso.android.remindly.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -37,18 +37,18 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ReminderAddActivity"
+        <activity android:name="bso.android.remindly.ReminderAddActivity"
                   android:label="@string/title_activity_add_reminder"/>
 
-        <activity android:name=".ReminderEditActivity"
+        <activity android:name="bso.android.remindly.ReminderEditActivity"
                   android:label="@string/title_activity_edit_reminder"/>
 
-        <activity android:name=".LicencesActivity"
+        <activity android:name="bso.android.remindly.LicencesActivity"
                   android:label="@string/title_activity_licenses"/>
 
-        <receiver android:name=".AlarmReceiver"/>
+        <receiver android:name="bso.android.remindly.AlarmReceiver"/>
 
-        <receiver android:name=".BootReceiver">
+        <receiver android:name="bso.android.remindly.BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>

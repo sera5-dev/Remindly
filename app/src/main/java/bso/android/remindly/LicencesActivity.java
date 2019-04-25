@@ -15,13 +15,15 @@
  */
 
 
-package com.blanyal.remindme;
+package bso.android.remindly;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.View;
+
+import com.blanyal.remindme.R;
 
 
 public class LicencesActivity extends AppCompatActivity {

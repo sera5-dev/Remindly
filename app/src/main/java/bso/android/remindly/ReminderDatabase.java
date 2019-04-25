@@ -15,7 +15,7 @@
  */
 
 
-package com.blanyal.remindme;
+package bso.android.remindly;
 
 import android.content.ContentValues;
 import android.content.Context;

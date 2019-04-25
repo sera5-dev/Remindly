@@ -15,7 +15,7 @@
  */
 
 
-package com.blanyal.remindme;
+package bso.android.remindly;
 
 // Reminder class
 public class Reminder {

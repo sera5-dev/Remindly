@@ -15,7 +15,7 @@
  */
 
 
-package com.blanyal.remindme;
+package bso.android.remindly;
 
 
 import android.app.AlarmManager;
@@ -30,7 +30,8 @@ import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.WakefulBroadcastReceiver;
+
+import com.blanyal.remindme.R;
 
 import java.util.Calendar;
 
