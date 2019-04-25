@@ -96,6 +96,7 @@ public class ReminderAddActivity extends AppCompatActivity implements
     private Reminder mReceivedReminder;
     private ReminderDatabase rb;
 
+    private AlarmReceiver mAlarmReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,6 +153,8 @@ public class ReminderAddActivity extends AppCompatActivity implements
             mRepeatText.setText("Every " + mRepeatNo + " " + mRepeatType + "(s)");
 
             getSupportActionBar().setTitle(R.string.title_activity_add_reminder);
+
+            mAlarmReceiver = new AlarmReceiver();
         } else {
             // Get reminder using reminder id
             rb = new ReminderDatabase(this);
@@ -437,6 +440,54 @@ public class ReminderAddActivity extends AppCompatActivity implements
         onBackPressed();
     }
 
+    // On clicking the update button
+    public void updateReminder(){
+        // Set new values in the reminder
+        mReceivedReminder.setTitle(mTitle);
+        mReceivedReminder.setDate(mDate);
+        mReceivedReminder.setTime(mTime);
+        mReceivedReminder.setRepeat(mRepeat);
+        mReceivedReminder.setRepeatNo(mRepeatNo);
+        mReceivedReminder.setRepeatType(mRepeatType);
+        mReceivedReminder.setActive(mActive);
+
+        // Update reminder
+        rb.updateReminder(mReceivedReminder);
+
+        // Set up calender for creating the notification
+        mCalendar.set(Calendar.SECOND, 0);
+
+        // Cancel existing notification of the reminder by using its ID
+        mAlarmReceiver.cancelAlarm(getApplicationContext(), mReceivedID);
+
+        // Check repeat type
+        if (mRepeatType.equals("Minute")) {
+            mRepeatTime = Integer.parseInt(mRepeatNo) * milMinute;
+        } else if (mRepeatType.equals("Hour")) {
+            mRepeatTime = Integer.parseInt(mRepeatNo) * milHour;
+        } else if (mRepeatType.equals("Day")) {
+            mRepeatTime = Integer.parseInt(mRepeatNo) * milDay;
+        } else if (mRepeatType.equals("Week")) {
+            mRepeatTime = Integer.parseInt(mRepeatNo) * milWeek;
+        } else if (mRepeatType.equals("Month")) {
+            mRepeatTime = Integer.parseInt(mRepeatNo) * milMonth;
+        }
+
+        // Create a new notification
+        if (mActive.equals("true")) {
+            if (mRepeat.equals("true")) {
+                mAlarmReceiver.setRepeatAlarm(getApplicationContext(), mCalendar, mReceivedID, mRepeatTime);
+            } else if (mRepeat.equals("false")) {
+                mAlarmReceiver.setAlarm(getApplicationContext(), mCalendar, mReceivedID);
+            }
+        }
+
+        // Create toast to confirm update
+        Toast.makeText(getApplicationContext(), "Edited",
+                Toast.LENGTH_SHORT).show();
+        onBackPressed();
+    }
+
     // On pressing the back button
     @Override
     public void onBackPressed() {
@@ -470,7 +521,9 @@ public class ReminderAddActivity extends AppCompatActivity implements
                     mTitleText.setError("Reminder Title cannot be blank!");
 
                 else {
-                    saveReminder();
+                    if(!isEdit)
+                        saveReminder();
+                    else updateReminder();
                 }
                 return true;
 
