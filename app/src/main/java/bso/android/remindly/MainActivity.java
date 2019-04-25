@@ -253,7 +253,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     // Adapter class for recycler view
     public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.VerticalItemHolder> {
         private ArrayList<ReminderItem> mItems;

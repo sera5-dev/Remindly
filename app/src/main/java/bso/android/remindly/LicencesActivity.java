@@ -25,7 +25,6 @@ import android.view.View;
 
 import com.blanyal.remindme.R;
 
-
 public class LicencesActivity extends AppCompatActivity {
     private Toolbar mToolbar;
 
