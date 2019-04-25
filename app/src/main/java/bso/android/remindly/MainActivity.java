@@ -19,6 +19,7 @@ package bso.android.remindly;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -49,6 +50,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -257,22 +259,22 @@ public class MainActivity extends AppCompatActivity {
     public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.VerticalItemHolder> {
         private ArrayList<ReminderItem> mItems;
 
-        public SimpleAdapter() {
+        SimpleAdapter() {
             mItems = new ArrayList<>();
         }
 
-        public void setItemCount(int count) {
+        void setItemCount(int count) {
             mItems.clear();
             mItems.addAll(generateData(count));
             notifyDataSetChanged();
         }
 
-        public void onDeleteItem(int count) {
+        void onDeleteItem(int count) {
             mItems.clear();
             mItems.addAll(generateData(count));
         }
 
-        public void removeItemSelected(int selected) {
+        void removeItemSelected(int selected) {
             if (mItems.isEmpty()) return;
             mItems.remove(selected);
             notifyItemRemoved(selected);
@@ -280,7 +282,8 @@ public class MainActivity extends AppCompatActivity {
 
         // View holder for recycler view items
         @Override
-        public VerticalItemHolder onCreateViewHolder(ViewGroup container, int viewType) {
+        @NonNull
+        public VerticalItemHolder onCreateViewHolder(@NonNull ViewGroup container, int viewType) {
             LayoutInflater inflater = LayoutInflater.from(container.getContext());
             View root = inflater.inflate(R.layout.recycle_items, container, false);
 
@@ -288,7 +291,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onBindViewHolder(VerticalItemHolder itemHolder, int position) {
+        public void onBindViewHolder(@NonNull VerticalItemHolder itemHolder, int position) {
             ReminderItem item = mItems.get(position);
             itemHolder.setReminderTitle(item.mTitle);
             itemHolder.setReminderDateTime(item.mDateTime);
@@ -302,15 +305,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Class for recycler view items
-        public  class ReminderItem {
-            public String mTitle;
-            public String mDateTime;
-            public String mRepeat;
-            public String mRepeatNo;
-            public String mRepeatType;
-            public String mActive;
+        class ReminderItem {
+            String mTitle;
+            String mDateTime;
+            String mRepeat;
+            String mRepeatNo;
+            String mRepeatType;
+            String mActive;
 
-            public ReminderItem(String Title, String DateTime, String Repeat, String RepeatNo, String RepeatType, String Active) {
+            ReminderItem(String Title, String DateTime, String Repeat, String RepeatNo, String RepeatType, String Active) {
                 this.mTitle = Title;
                 this.mDateTime = DateTime;
                 this.mRepeat = Repeat;
@@ -322,7 +325,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Class to compare date and time so that items are sorted in ascending order
         public class DateTimeComparator implements Comparator {
-            DateFormat f = new SimpleDateFormat("dd/mm/yyyy hh:mm");
+            DateFormat f = new SimpleDateFormat("dd/mm/yyyy hh:mm", Locale.US);
 
             public int compare(Object a, Object b) {
                 String o1 = ((DateTimeSorter)a).getDateTime();
@@ -345,7 +348,7 @@ public class MainActivity extends AppCompatActivity {
             private TextDrawable mDrawableBuilder;
             private SimpleAdapter mAdapter;
 
-            public VerticalItemHolder(View itemView, SimpleAdapter adapter) {
+            VerticalItemHolder(View itemView, SimpleAdapter adapter) {
                 super(itemView, mMultiSelector);
                 itemView.setOnClickListener(this);
                 itemView.setOnLongClickListener(this);
