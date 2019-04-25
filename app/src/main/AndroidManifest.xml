@@ -39,9 +39,6 @@
         <activity android:name="bso.android.remindly.ReminderAddActivity"
                   android:label="@string/title_activity_add_reminder"/>
 
-        <activity android:name="bso.android.remindly.ReminderEditActivity"
-                  android:label="@string/title_activity_edit_reminder"/>
-
         <activity android:name="bso.android.remindly.LicencesActivity"
                   android:label="@string/title_activity_licenses"/>
 

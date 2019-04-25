@@ -42,7 +42,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        int mReceivedID = Integer.parseInt(intent.getStringExtra(ReminderEditActivity.EXTRA_REMINDER_ID));
+        int mReceivedID = Integer.parseInt(intent.getStringExtra(ReminderAddActivity.EXTRA_REMINDER_ID));
 
         // Get notification title from Reminder Database
         ReminderDatabase rb = new ReminderDatabase(context);
@@ -50,8 +50,8 @@ public class AlarmReceiver extends BroadcastReceiver {
         String mTitle = reminder.getTitle();
 
         // Create intent to open ReminderEditActivity on notification click
-        Intent editIntent = new Intent(context, ReminderEditActivity.class);
-        editIntent.putExtra(ReminderEditActivity.EXTRA_REMINDER_ID, Integer.toString(mReceivedID));
+        Intent editIntent = new Intent(context, ReminderAddActivity.class);
+        editIntent.putExtra(ReminderAddActivity.EXTRA_REMINDER_ID, Integer.toString(mReceivedID));
         PendingIntent mClick = PendingIntent.getActivity(context, mReceivedID, editIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         // Create Notification
@@ -75,7 +75,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         // Put Reminder ID in Intent Extra
         Intent intent = new Intent(context, AlarmReceiver.class);
-        intent.putExtra(ReminderEditActivity.EXTRA_REMINDER_ID, Integer.toString(ID));
+        intent.putExtra(ReminderAddActivity.EXTRA_REMINDER_ID, Integer.toString(ID));
         mPendingIntent = PendingIntent.getBroadcast(context, ID, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
         // Calculate notification time
@@ -101,7 +101,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         // Put Reminder ID in Intent Extra
         Intent intent = new Intent(context, AlarmReceiver.class);
-        intent.putExtra(ReminderEditActivity.EXTRA_REMINDER_ID, Integer.toString(ID));
+        intent.putExtra(ReminderAddActivity.EXTRA_REMINDER_ID, Integer.toString(ID));
         mPendingIntent = PendingIntent.getBroadcast(context, ID, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
         // Calculate notification timein

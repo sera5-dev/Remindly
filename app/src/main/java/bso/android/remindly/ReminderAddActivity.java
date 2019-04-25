@@ -21,6 +21,7 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -30,8 +31,10 @@ import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -40,12 +43,16 @@ import android.widget.Toast;
 import com.blanyal.remindme.R;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 
 public class ReminderAddActivity extends AppCompatActivity implements
         TimePickerDialog.OnTimeSetListener,
-        DatePickerDialog.OnDateSetListener{
+        DatePickerDialog.OnDateSetListener,
+        Switch.OnCheckedChangeListener{
 
     private Toolbar mToolbar;
     private EditText mTitleText;
@@ -62,6 +69,8 @@ public class ReminderAddActivity extends AppCompatActivity implements
     private String mRepeatNo;
     private String mRepeatType;
     private String mActive;
+    private Switch mRepeatSwitch;
+    private RelativeLayout mLayoutRepType, mLayoutRepNo;
 
     // Values for orientation change
     private static final String KEY_TITLE = "title_key";
@@ -79,11 +88,25 @@ public class ReminderAddActivity extends AppCompatActivity implements
     private static final long milWeek = 604800000L;
     private static final long milMonth = 2592000000L;
 
+    private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
+    private int mReceivedID;
+    public static final String EXTRA_REMINDER_ID = "Reminder_ID";
+    private boolean isEdit=false;
+    private Reminder mReceivedReminder;
+    private ReminderDatabase rb;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_reminder);
+
+        Intent i = getIntent();
+
+        if(i.hasExtra(EXTRA_REMINDER_ID)) {
+            mReceivedID = Integer.parseInt(i.getStringExtra(EXTRA_REMINDER_ID));
+            isEdit = true;
+        }
 
         // Initialize Views
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -95,51 +118,64 @@ public class ReminderAddActivity extends AppCompatActivity implements
         mRepeatTypeText = (TextView) findViewById(R.id.set_repeat_type);
         mFAB1 = (FloatingActionButton) findViewById(R.id.starred1);
         mFAB2 = (FloatingActionButton) findViewById(R.id.starred2);
+        mLayoutRepType = findViewById(R.id.RepeatType);
+        mLayoutRepNo = findViewById(R.id.RepeatNo);
+        mRepeatSwitch = findViewById(R.id.repeat_switch);
 
         // Setup Toolbar
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setTitle(R.string.title_activity_add_reminder);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
         // Initialize default values
-        mActive = "true";
-        mRepeat = "true";
-        mRepeatNo = Integer.toString(1);
-        mRepeatType = "Hour";
+        if(!isEdit) {
+            mActive = "true";
+            mRepeat = "true";
+            mRepeatNo = Integer.toString(1);
+            mRepeatType = "Hour";
 
-        mCalendar = Calendar.getInstance();
-        mHour = mCalendar.get(Calendar.HOUR_OF_DAY);
-        mMinute = mCalendar.get(Calendar.MINUTE);
-        mYear = mCalendar.get(Calendar.YEAR);
-        mMonth = mCalendar.get(Calendar.MONTH) + 1;
-        mDay = mCalendar.get(Calendar.DATE);
+            mCalendar = Calendar.getInstance();
+            mHour = mCalendar.getTime().getHours();
+            mMinute = mCalendar.getTime().getMinutes();
+            mYear = mCalendar.getTime().getYear();
+            mMonth = mCalendar.getTime().getMonth();
+            mDay = mCalendar.getTime().getDay();
 
-        mDate = mDay + "/" + mMonth + "/" + mYear;
-        mTime = mHour + ":" + mMinute;
+            mDate = sdf.format(mCalendar.getTime());
+            mTime = mHour + ":" + mMinute;
 
-        // Setup Reminder Title EditText
-        mTitleText.addTextChangedListener(new TextWatcher() {
+            mDateText.setText(mDate);
+            mTimeText.setText(mTime);
+            mRepeatNoText.setText(mRepeatNo);
+            mRepeatTypeText.setText(mRepeatType);
+            mRepeatText.setText("Every " + mRepeatNo + " " + mRepeatType + "(s)");
 
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            getSupportActionBar().setTitle(R.string.title_activity_add_reminder);
+        } else {
+            // Get reminder using reminder id
+            rb = new ReminderDatabase(this);
+            mReceivedReminder = rb.getReminder(mReceivedID);
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                mTitle = s.toString().trim();
-                mTitleText.setError(null);
-            }
+            // Get values from reminder
+            mTitle = mReceivedReminder.getTitle();
+            mDate = mReceivedReminder.getDate();
+            mTime = mReceivedReminder.getTime();
+            mRepeat = mReceivedReminder.getRepeat();
+            mRepeatNo = mReceivedReminder.getRepeatNo();
+            mRepeatType = mReceivedReminder.getRepeatType();
+            mActive = mReceivedReminder.getActive();
 
-            @Override
-            public void afterTextChanged(Editable s) {}
-        });
+            // Setup TextViews using reminder values
+            mTitleText.setText(mTitle);
+            mDateText.setText(mDate);
+            mTimeText.setText(mTime);
+            mRepeatNoText.setText(mRepeatNo);
+            mRepeatTypeText.setText(mRepeatType);
+            mRepeatText.setText("Every " + mRepeatNo + " " + mRepeatType + "(s)");
 
-        // Setup TextViews using reminder values
-        mDateText.setText(mDate);
-        mTimeText.setText(mTime);
-        mRepeatNoText.setText(mRepeatNo);
-        mRepeatTypeText.setText(mRepeatType);
-        mRepeatText.setText("Every " + mRepeatNo + " " + mRepeatType + "(s)");
+            getSupportActionBar().setTitle(R.string.title_activity_edit_reminder);
+        }
+        //End of default
 
         // To save state on device rotation
         if (savedInstanceState != null) {
@@ -170,6 +206,8 @@ public class ReminderAddActivity extends AppCompatActivity implements
             mActive = savedInstanceState.getString(KEY_ACTIVE);
         }
 
+        mRepeatSwitch.setOnCheckedChangeListener(this);
+
         // Setup up active buttons
         if (mActive.equals("false")) {
             mFAB1.setVisibility(View.VISIBLE);
@@ -179,6 +217,22 @@ public class ReminderAddActivity extends AppCompatActivity implements
             mFAB1.setVisibility(View.GONE);
             mFAB2.setVisibility(View.VISIBLE);
         }
+
+        // Setup Reminder Title EditText
+        mTitleText.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mTitle = s.toString().trim();
+                mTitleText.setError(null);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
     }
 
     // To save state on device rotation
@@ -220,12 +274,11 @@ public class ReminderAddActivity extends AppCompatActivity implements
 
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-        month++;
-        mDay = dayOfMonth;
-        mMonth = month;
-        mYear = year;
-        mDate = dayOfMonth + "/" + month + "/" + year;
-        mDateText.setText(mDate);
+        mCalendar.set(year,month,dayOfMonth);
+        mDay = mCalendar.getTime().getDay();
+        mMonth = mCalendar.getTime().getMonth();
+        mYear = mCalendar.getTime().getYear();
+        mDateText.setText(sdf.format(mCalendar.getTime()));
     }
 
     @Override
@@ -258,15 +311,18 @@ public class ReminderAddActivity extends AppCompatActivity implements
         mActive = "false";
     }
 
-    // On clicking the repeat switch
-    public void onSwitchRepeat(View view) {
-        boolean on = ((Switch) view).isChecked();
-        if (on) {
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if (isChecked) {
             mRepeat = "true";
             mRepeatText.setText("Every " + mRepeatNo + " " + mRepeatType + "(s)");
+            mLayoutRepNo.setVisibility(View.VISIBLE);
+            mLayoutRepType.setVisibility(View.VISIBLE);
         } else {
             mRepeat = "false";
             mRepeatText.setText(R.string.repeat_off);
+            mLayoutRepNo.setVisibility(View.GONE);
+            mLayoutRepType.setVisibility(View.GONE);
         }
     }
 
