@@ -43,6 +43,7 @@ import android.widget.Toast;
 import com.blanyal.remindme.R;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -169,6 +170,7 @@ public class ReminderAddActivity extends AppCompatActivity implements
             mTitleText.setText(mTitle);
             mDateText.setText(mDate);
             mTimeText.setText(mTime);
+
             mRepeatNoText.setText(mRepeatNo);
             mRepeatTypeText.setText(mRepeatType);
             mRepeatText.setText("Every " + mRepeatNo + " " + mRepeatType + "(s)");
@@ -218,6 +220,12 @@ public class ReminderAddActivity extends AppCompatActivity implements
             mFAB2.setVisibility(View.VISIBLE);
         }
 
+        if(mRepeat.equalsIgnoreCase("true")) {
+            mRepeatSwitch.setChecked(true);
+        } else {
+            mRepeatSwitch.setChecked(false);
+        }
+
         // Setup Reminder Title EditText
         mTitleText.addTextChangedListener(new TextWatcher() {
 
@@ -260,9 +268,8 @@ public class ReminderAddActivity extends AppCompatActivity implements
     }
 
     public void setTime(View v) {
-        Calendar myCalendar = Calendar.getInstance();
-        int hour = myCalendar.get(Calendar.HOUR_OF_DAY);
-        int minute = myCalendar.get(Calendar.MINUTE);
+        int hour = mCalendar.get(Calendar.HOUR_OF_DAY);
+        int minute = mCalendar.get(Calendar.MINUTE);
 
         TimePickerDialog tpd;
 
@@ -283,8 +290,10 @@ public class ReminderAddActivity extends AppCompatActivity implements
 
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        mHour = hourOfDay;
-        mMinute = minute;
+        mCalendar.set(Calendar.HOUR_OF_DAY,hourOfDay);
+        mCalendar.set(Calendar.MINUTE,minute);
+        mHour = mCalendar.getTime().getHours();
+        mMinute = mCalendar.getTime().getMinutes();
         if (minute < 10) {
             mTime = hourOfDay + ":" + "0" + minute;
         } else {
@@ -389,16 +398,15 @@ public class ReminderAddActivity extends AppCompatActivity implements
     public void saveReminder(){
         ReminderDatabase rb = new ReminderDatabase(this);
 
+        DateFormat fmt = SimpleDateFormat.getDateTimeInstance();
+
+
+        mCalendar.set(Calendar.SECOND, 0);
+
+        System.out.println(fmt.format(mCalendar.getTime()));
+
         // Creating Reminder
         int ID = rb.addReminder(new Reminder(mTitle, mDate, mTime, mRepeat, mRepeatNo, mRepeatType, mActive));
-
-        // Set up calender for creating the notification
-        mCalendar.set(Calendar.MONTH, --mMonth);
-        mCalendar.set(Calendar.YEAR, mYear);
-        mCalendar.set(Calendar.DAY_OF_MONTH, mDay);
-        mCalendar.set(Calendar.HOUR_OF_DAY, mHour);
-        mCalendar.set(Calendar.MINUTE, mMinute);
-        mCalendar.set(Calendar.SECOND, 0);
 
         // Check repeat type
         if (mRepeatType.equals("Minute")) {

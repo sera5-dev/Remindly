@@ -47,10 +47,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -407,16 +405,8 @@ public class MainActivity extends AppCompatActivity {
 
             // Set date and time views
             public void setReminderDateTime(String datetime) {
-                DateFormat src = new SimpleDateFormat("dd/MMM/yyyy HH:mm", Locale.US);
-                DateFormat sdf = SimpleDateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT);
-                Date d = new Date();
-                try {
-                    d = src.parse(datetime);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                } finally {
-                    mDateAndTimeText.setText(sdf.format(d));
-                }
+                    mDateAndTimeText.setText(datetime);
+
             }
 
             // Set repeat views
